@@ -284,4 +284,27 @@ public class CameraModule extends ReactContextBaseJavaModule {
           }
       });
   }
+
+    @ReactMethod
+    public void cameraEnabled(final int viewTag, final boolean cameraEnabled) {
+        final ReactApplicationContext context = getReactApplicationContext();
+        UIManagerModule uiManager = context.getNativeModule(UIManagerModule.class);
+        uiManager.addUIBlock(new UIBlock() {
+            @Override
+            public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
+                final RNCameraView cameraView;
+
+                try {
+                    cameraView = (RNCameraView) nativeViewHierarchyManager.resolveView(viewTag);
+                    if (cameraEnabled) {
+                        cameraView.onCameraStart();
+                    } else {
+                        cameraView.onCameraStop();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 }

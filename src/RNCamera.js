@@ -231,6 +231,13 @@ export default class Camera extends React.Component<PropsType> {
     CameraManager.stopRecording(this._cameraHandle);
   }
 
+  cameraEnabled(enable: boolean) {
+    if (this._cameraHandle == null) {
+      return;
+    }
+    CameraManager.cameraEnabled(this._cameraHandle, enable);
+  }
+
   _onMountError = () => {
     if (this.props.onMountError) {
       this.props.onMountError();

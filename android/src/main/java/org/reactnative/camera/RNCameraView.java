@@ -289,6 +289,16 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
 
   @Override
   public void onHostResume() {
+    onCameraStart();
+  }
+
+  @Override
+  public void onHostPause() {
+    onCameraStop();
+  }
+
+
+  public void onCameraStart(){
     if (hasCameraPermissions()) {
       if ((mIsPaused && !isCameraOpened()) || mIsNew) {
         mIsPaused = false;
@@ -304,8 +314,7 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
     }
   }
 
-  @Override
-  public void onHostPause() {
+  public void onCameraStop(){
     if (!mIsPaused && isCameraOpened()) {
       mIsPaused = true;
       stop();
