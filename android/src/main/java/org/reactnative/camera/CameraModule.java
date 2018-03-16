@@ -297,9 +297,9 @@ public class CameraModule extends ReactContextBaseJavaModule {
                 try {
                     cameraView = (RNCameraView) nativeViewHierarchyManager.resolveView(viewTag);
                     if (cameraEnabled) {
-                        cameraView.onCameraStart();
+                        cameraView.start();
                     } else {
-                        cameraView.onCameraStop();
+                        cameraView.stop();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
