@@ -548,12 +548,14 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         self.session.sessionPreset = AVCaptureSessionPresetPhoto;
         
         AVCaptureStillImageOutput *stillImageOutput = [[AVCaptureStillImageOutput alloc] init];
+        [self.session beginConfiguration];
         if ([self.session canAddOutput:stillImageOutput]) {
             stillImageOutput.outputSettings = @{AVVideoCodecKey : AVVideoCodecJPEG};
             [self.session addOutput:stillImageOutput];
             [stillImageOutput setHighResolutionStillImageOutputEnabled:YES];
             self.stillImageOutput = stillImageOutput;
         }
+        [self.session commitConfiguration];
 
 #if __has_include(<GoogleMobileVision/GoogleMobileVision.h>)
         [_faceDetectorManager maybeStartFaceDetectionOnSession:_session withPreviewLayer:_previewLayer];
@@ -768,11 +770,13 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
 {
     if ([self isReadingBarCodes] && (_metadataOutput == nil || ![self.session.outputs containsObject:_metadataOutput])) {
         AVCaptureMetadataOutput *metadataOutput = [[AVCaptureMetadataOutput alloc] init];
+        [self.session beginConfiguration];
         if ([self.session canAddOutput:metadataOutput]) {
             [metadataOutput setMetadataObjectsDelegate:self queue:self.sessionQueue];
             [self.session addOutput:metadataOutput];
             self.metadataOutput = metadataOutput;
         }
+        [self.session commitConfiguration];
     } else if (_metadataOutput != nil && ![self isReadingBarCodes]) {
         [self.session removeOutput:_metadataOutput];
         _metadataOutput = nil;
@@ -834,11 +838,12 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
 - (void)setupMovieFileCapture
 {
     AVCaptureMovieFileOutput *movieFileOutput = [[AVCaptureMovieFileOutput alloc] init];
-
+    [self.session beginConfiguration];
     if ([self.session canAddOutput:movieFileOutput]) {
         [self.session addOutput:movieFileOutput];
         self.movieFileOutput = movieFileOutput;
     }
+    [self.session commitConfiguration];
 }
 
 - (void)cleanupMovieFileCapture
@@ -1003,6 +1008,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
             [self stopTextRecognition];
             return;
         }
+        [self.session beginConfiguration];
         NSDictionary *rgbOutputSettings = [NSDictionary
             dictionaryWithObject:[NSNumber numberWithInt:kCMPixelFormat_32BGRA]
                             forKey:(id)kCVPixelBufferPixelFormatTypeKey];
@@ -1010,6 +1016,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         [self.videoDataOutput setAlwaysDiscardsLateVideoFrames:YES];
         [self.videoDataOutput setSampleBufferDelegate:self queue:self.sessionQueue];
         [self.session addOutput:_videoDataOutput];
+        [self.session commitConfiguration];
     } else {
         [self stopTextRecognition];
     }
