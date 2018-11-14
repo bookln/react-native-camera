@@ -173,6 +173,12 @@ RCT_CUSTOM_VIEW_PROPERTY(autoFocus, NSInteger, RNCamera)
     [view updateFocusMode];
 }
 
+RCT_CUSTOM_VIEW_PROPERTY(autoFocusPointOfInterest, NSDictionary, RNCamera)
+{
+    [view setAutoFocusPointOfInterest:[RCTConvert NSDictionary:json]];
+    [view updateAutoFocusPointOfInterest];
+}
+
 RCT_CUSTOM_VIEW_PROPERTY(focusDepth, NSNumber, RNCamera)
 {
     [view setFocusDepth:[RCTConvert float:json]];
@@ -236,6 +242,11 @@ RCT_CUSTOM_VIEW_PROPERTY(textRecognizerEnabled, BOOL, RNCamera)
     
     view.canReadText = [RCTConvert BOOL:json];
     [view setupOrDisableTextDetector];
+}
+
+RCT_CUSTOM_VIEW_PROPERTY(defaultVideoQuality, NSInteger, RNCamera)
+{
+    [view setDefaultVideoQuality: [NSNumber numberWithInteger:[RCTConvert NSInteger:json]]];
 }
 
 RCT_REMAP_METHOD(takePicture,
