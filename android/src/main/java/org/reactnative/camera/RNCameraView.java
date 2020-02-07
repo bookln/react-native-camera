@@ -232,7 +232,7 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
       throw e;
     }
   }
-        
+
   @Override
   public void onPictureSaved(WritableMap response) {
     RNCameraViewHelper.emitPictureSavedEvent(this, response);
@@ -303,7 +303,10 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
 
   public void onBarCodeScanningTaskCompleted() {
     barCodeScannerTaskLock = false;
-    mMultiFormatReader.reset();
+    if (mMultiFormatReader != null) {
+        mMultiFormatReader.reset();
+    }
+
   }
 
   /**
@@ -450,23 +453,40 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
 
   @Override
   public void onHostResume() {
-    if (hasCameraPermissions()) {
-      if ((mIsPaused && !isCameraOpened()) || mIsNew) {
-        mIsPaused = false;
-        mIsNew = false;
-        start();
-      }
-    } else {
-      RNCameraViewHelper.emitMountErrorEvent(this, "Camera permissions not granted - component could not be rendered.");
+   /**
+    * 由于react-native-navigation原因
+    * 切换Screen时componentDidAppear周期调用onResume
+    * 切换activity时(相册选取|切到桌面或其他App)
+    */
+    if (mIsPaused) {
+       onResume();
     }
   }
 
   @Override
   public void onHostPause() {
-    if (!mIsPaused && isCameraOpened()) {
-      mIsPaused = true;
-      stop();
-    }
+    onPause();
+  }
+
+  public void onResume() {
+      if (hasCameraPermissions()) {
+          if ((mIsPaused && !isCameraOpened()) || mIsNew) {
+              mIsPaused = false;
+              mIsNew = false;
+              start();
+          }
+      } else {
+          RNCameraViewHelper.emitMountErrorEvent(this, "Camera permissions not granted - component could not be rendered.");
+      }
+  }
+
+  public void onPause() {
+      if (!mIsPaused) {
+          mIsPaused = true;
+          if (isCameraOpened()) {
+              stop();
+          }
+      }
   }
 
   @Override
