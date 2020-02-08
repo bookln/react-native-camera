@@ -330,10 +330,18 @@ public class CameraModule extends ReactContextBaseJavaModule {
 
                 try {
                     cameraView = (RNCameraView) nativeViewHierarchyManager.resolveView(viewTag);
-                    if (cameraEnabled) {
-                        cameraView.onResume();
+                    /**
+                     * 由于react-native-navigation原因
+                     * 切换activity在onHostResume与onHostPause中处理
+                     * 切换screen在此处理
+                     */
+                    if (cameraView.isNewCamera()) {
+                        return;
+                    }
+                    if (cameraEnabled && !cameraView.isCameraOpened()) {
+                        cameraView.start();
                     } else {
-                        cameraView.onPause();
+                        cameraView.stop();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -341,6 +349,7 @@ public class CameraModule extends ReactContextBaseJavaModule {
             }
         });
     }
+
     @ReactMethod
     public void getAvailablePictureSizes(final String ratio, final int viewTag, final Promise promise) {
         final ReactApplicationContext context = getReactApplicationContext();
