@@ -338,10 +338,15 @@ public class CameraModule extends ReactContextBaseJavaModule {
                     if (cameraView.isNewCamera()) {
                         return;
                     }
+                    boolean isCameraOpened = cameraView.isCameraOpened();
                     if (cameraEnabled) {
-                        cameraView.start();
+                        if (!isCameraOpened) {
+                            cameraView.start();
+                        }
                     } else {
-                        cameraView.stop();
+                        if (isCameraOpened) {
+                            cameraView.stop();
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
