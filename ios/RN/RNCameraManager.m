@@ -376,5 +376,21 @@ RCT_REMAP_METHOD(getAvailablePictureSizes,
     resolve([[[self class] pictureSizes] allKeys]);
 }
 
+RCT_EXPORT_METHOD(cameraEnabled:(nonnull NSNumber *)reactTag enable:(BOOL)enable)
+{
+    [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, RNCamera *> *viewRegistry) {
+        RNCamera *view = viewRegistry[reactTag];
+        if (![view isKindOfClass:[RNCamera class]]) {
+            RCTLogError(@"Invalid view returned from registry, expecting RNCamera, got: %@", view);
+        } else {
+            if (enable) {
+                [view.session startRunning];
+            }else {
+                [view.session stopRunning];
+            }
+        }
+    }];
+}
+
 @end
 
