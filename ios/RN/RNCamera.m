@@ -50,7 +50,8 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
     self.previewLayer.needsDisplayOnBoundsChange = YES;
 #endif
     self.paused = NO;
-    [self changePreviewOrientation:[UIApplication sharedApplication].statusBarOrientation];
+    // [self changePreviewOrientation:[UIApplication sharedApplication].statusBarOrientation];
+    [self changePreviewOrientation:UIDevice.currentDevice.orientation];
     [self initializeCaptureSessionInput];
     [self startSession];
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -742,14 +743,15 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
 
 - (void)orientationChanged:(NSNotification *)notification
 {
-  UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-  [self changePreviewOrientation:orientation];
+  // UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+  UIDeviceOrientation deviceOrientation = [(UIDevice *)[notification object] orientation];
+  [self changePreviewOrientation:deviceOrientation];
 }
 
-- (void)changePreviewOrientation:(UIInterfaceOrientation)orientation
+- (void)changePreviewOrientation:(UIDeviceOrientation)orientation
 {
   __weak typeof(self) weakSelf = self;
-  AVCaptureVideoOrientation videoOrientation = [RNCameraUtils videoOrientationForInterfaceOrientation:orientation];
+  AVCaptureVideoOrientation videoOrientation = [RNCameraUtils videoOrientationForDeviceOrientation:orientation];
   dispatch_async(dispatch_get_main_queue(), ^{
     __strong typeof(self) strongSelf = weakSelf;
     if (strongSelf && strongSelf.previewLayer.connection.isVideoOrientationSupported) {
