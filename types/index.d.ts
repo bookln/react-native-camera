@@ -217,6 +217,7 @@ export class RNCamera extends Component<RNCameraProps & ViewProperties> {
     takePictureAsync(options?: TakePictureOptions): Promise<TakePictureResponse>;
     recordAsync(options?: RecordOptions): Promise<RecordResponse>;
     stopRecording(): void;
+    cameraEnabled(enable: boolean): void;
 
     /** Android only */
     getSupportedRatiosAsync(): Promise<string[]>;
